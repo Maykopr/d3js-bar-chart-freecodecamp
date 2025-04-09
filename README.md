@@ -1,6 +1,6 @@
 # D3.js Bar Chart
 
-![image](./src/img/image.png)
+![image](./image.png)
 
 App construído para um módulo do curso Front End Libraries do freeCodeCamp.
 
