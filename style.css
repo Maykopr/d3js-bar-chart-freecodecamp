@@ -6,7 +6,7 @@
 }
 :root {
 	--primary: hsl(179, 92%, 25%);
-	--primary-light: hsl(from var(--primary) h s calc(l + 30));
+	--primary-light: hsl(from var(--primary) h 50% calc(l + 40));
 	--secondary: hsl(179, 10%, 80%);
 	--light: hsl(170, 75%, 98%);
 	--dark: hsl(from var(--primary) h s calc(l - 15));
@@ -15,29 +15,26 @@
 body {
 	font-family: "Roboto", sans-serif;
 	background-color: var(--secondary);
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	height: 100vh;
+	min-height: 100vh;
 	color: var(--dark);
 }
 .container {
+	margin: 50px auto;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	flex-direction: column;
 	width: clamp(300px, 96%, 1000px);
-	height: clamp(300px, 96%, 1000px);
+	height: auto;
 	background-color: var(--light);
 	border-radius: 0.3em;
 	gap: 0.2em;
-	padding: 0.2em;
+	padding: 0.8em;
 }
 
 #canvas {
+	width: 100%;
 	position: relative;
-	width: 95%;
-	height: 80%;
 }
 
 .bar {
@@ -46,12 +43,7 @@ body {
 
 #x-axis,
 #y-axis {
-	font-size: 0.8em;
-}
-
-.overlay {
-	background-color: var(--secondary);
-	position: absolute;
+	font-size: 0.7em;
 }
 
 #tooltip {

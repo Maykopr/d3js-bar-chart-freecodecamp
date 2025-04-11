@@ -1,6 +1,6 @@
-const margin = { top: 40, left: 40, right: 40, bottom: 40 };
-let outWidth = parseInt(d3.select("#canvas").style("width"));
-let outHeight = parseInt(d3.select("#canvas").style("height"));
+const margin = { top: 40, left: 50, right: 40, bottom: 40 };
+const outWidth = 800;
+const outHeight = 450;
 const inWidth = outWidth - margin.left - margin.right;
 const inHeight = outHeight - margin.top - margin.bottom;
 
@@ -14,8 +14,7 @@ function drawChartResponsive(data) {
 	const container = canvas
 		.append("svg")
 		.attr("class", "svg-container")
-		.attr("width", outWidth)
-		.attr("height", outHeight);
+		.attr("viewBox", `0 0 ${outWidth} ${outHeight}`);
 
 	container
 		.append("text")
@@ -48,8 +47,6 @@ function drawChartResponsive(data) {
 
 	const tooltip = canvas.append("div").attr("id", "tooltip").style("opacity", 0);
 
-	const overlay = canvas.append("div").attr("class", "overlay").style("opacity", 0);
-
 	// montando o chart
 	container
 		.append("g")
@@ -75,68 +72,34 @@ function drawChartResponsive(data) {
 	const barWidth = xScale(new Date(d3.max(years))) / years.length;
 	svg.attr("width", barWidth)
 		.attr("height", (d) => d)
-		.attr("x", (d, i) => xScale(yearsDate[i]))
+		.attr("x", (d, i) => xScale(yearsDate[i]) + margin.left)
 		.attr("y", (d) => outHeight - margin.bottom - d)
 		.attr("class", "bar")
 		.attr("data-date", (d, i) => data.data[i][0])
 		.attr("data-gdp", (d, i) => data.data[i][1])
 		.attr("index", (d, i) => i)
-		.attr("transform", `translate(${margin.left}, 0)`)
 		.on("mouseover", function (event, d) {
+			event.target.style.opacity = 0.5;
 			const i = this.getAttribute("index");
 
-			overlay
-				.transition()
-				.duration(0)
-				.style("opacity", 0.9)
-				.style("height", d + "px")
-				.style("width", barWidth + "px")
-				.style("left", xScale(yearsDate[i]) + "px")
-				.style("top", outHeight - margin.bottom - d + "px")
-				.style("transform", `translateX(${margin.left}px)`);
 			tooltip.transition().duration(0).style("opacity", 0.9);
 			tooltip
 				.text(
 					`${years[i]}
-                    $${GDP[i].toFixed(1).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")}
-                    Billion
-                    `
+				$${GDP[i].toFixed(1).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")}
+				Billion
+				`
 				)
 				.attr("data-date", data.data[i][0])
-				.style("left", barWidth * i + "px")
-				.style("top", outHeight / 2 + "px")
-				.style("transform", `translateX(80px)`)
+				.style("left", xScale(yearsDate[i]) + margin.left + "px")
+				.style("top", inHeight / 2 + "px")
+				.style("transform", `translateX(10px)`)
 				.style("opacity", "0.9");
 		})
-		.on("mouseout", function () {
+		.on("mouseout", function (event) {
+			event.target.style.opacity = 1;
 			tooltip.transition().duration(500).style("opacity", 0);
-			overlay.transition().duration(500).style("opacity", 0);
 		});
-
-	function changeWidthResponsive() {
-		outWidth = parseInt(d3.select(".container").style("width"), 10);
-		const inWidth = outWidth - margin.left - margin.right;
-		d3.select(".svg-container").attr("width", inWidth).attr("height", outHeight);
-
-		xScale.range([0, inWidth]);
-		yAxisScale.rangeRound([inHeight, 0]);
-		const xAxis = d3.axisBottom(xScale);
-
-		d3.select("#x-axis")
-			.attr("transform", `translate(0,${outHeight - margin.bottom})`)
-			.call(xAxis)
-			.selectAll("text")
-			.attr("dx", "-1.0em")
-			.attr("dy", ".15em");
-
-		d3.selectAll(".bar")
-			.attr("width", barWidth)
-			.attr("height", (d) => d)
-			.attr("x", (d, i) => xScale(yearsDate[i]))
-			.attr("y", (d) => outHeight - margin.bottom - d);
-	}
-
-	window.addEventListener("resize", changeWidthResponsive);
 }
 
 async function main() {
